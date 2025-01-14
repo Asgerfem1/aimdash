@@ -1,14 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, BarChart3, Target } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@supabase/auth-helpers-react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
+import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { ScreenshotsSection } from "@/components/home/ScreenshotsSection";
+import { PricingSection } from "@/components/home/PricingSection";
+import { CTASection } from "@/components/home/CTASection";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -60,166 +61,14 @@ const Index = () => {
     return "Purchase Access";
   };
 
-  const features = [
-    {
-      title: "Set Your Goals",
-      description: "Define clear, actionable goals with deadlines and priorities",
-      icon: Target,
-    },
-    {
-      title: "Track Progress",
-      description: "Monitor your progress with visual dashboards and metrics",
-      icon: BarChart3,
-    },
-    {
-      title: "Achieve Milestones",
-      description: "Break down goals into manageable milestones and celebrate wins",
-      icon: CheckCircle2,
-    },
-  ];
-
-  const screenshots = [
-    {
-      title: "Goal Dashboard",
-      description: "Track all your goals in one place with our intuitive dashboard",
-      image: "/lovable-uploads/2e05b854-031d-4037-a704-12139d5a50d9.png",
-    },
-    {
-      title: "AI Assistant",
-      description: "Get personalized guidance with our AI Goal Planning Assistant",
-      image: "/lovable-uploads/d289ccb1-450a-4890-b18e-28b96857ceee.png",
-    },
-    {
-      title: "Progress Analytics",
-      description: "Visualize your progress with detailed analytics and insights",
-      image: "/lovable-uploads/c26efbfd-6f70-4f17-a3f4-d30278c7b00f.png",
-    },
-  ];
-
-  const pricingPlan = {
-    name: "Lifetime Access",
-    price: "$24",
-    description: "One-time payment for all features",
-    features: [
-      "Unlimited goals",
-      "Goal progress tracking",
-      "Task management",
-      "Priority levels",
-      "Recurring goals",
-      "Visual analytics",
-      "Custom categories",
-      "AI Goal Planning Assistant",
-    ],
-  };
-
   return (
     <div className="min-h-screen font-outfit">
       <Navigation />
-      
       <HeroSection onAction={handleAction} buttonText={getButtonText()} isLoading={isLoading} />
-
-      {/* Features Section */}
-      <section id="how-it-works" className="py-20 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-primary-700">
-            How It Works
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="text-primary mb-4">
-                    <feature.icon size={40} />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Screenshots Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-white to-primary-100">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-primary-700">
-            See AimDash in Action
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {screenshots.map((screenshot, index) => (
-              <div key={index} className="space-y-4">
-                <div className="aspect-video rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
-                  <img
-                    src={screenshot.image}
-                    alt={screenshot.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-semibold text-center">{screenshot.title}</h3>
-                <p className="text-gray-600 text-center">{screenshot.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 bg-gray-50">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-primary-700">
-            Simple, One-Time Pricing
-          </h2>
-          <div className="max-w-lg mx-auto">
-            <Card className="border-2 border-primary shadow-xl">
-              <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-2">{pricingPlan.name}</h3>
-                <div className="mb-4">
-                  <span className="text-3xl font-bold">{pricingPlan.price}</span>
-                  <span className="text-gray-600"> one-time</span>
-                </div>
-                <p className="text-gray-600 mb-6">{pricingPlan.description}</p>
-                <ul className="space-y-3 mb-6">
-                  {pricingPlan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center">
-                      <CheckCircle2 className="text-primary mr-2 h-5 w-5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button 
-                  className="w-full"
-                  onClick={handleAction}
-                  disabled={isLoading}
-                >
-                  {getButtonText()}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-white to-primary-100">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-primary-700">
-            Ready to Achieve Your Goals?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who are transforming their goals into reality with AimDash.
-          </p>
-          <Button 
-            size="lg" 
-            className="text-lg px-8"
-            onClick={handleAction}
-            disabled={isLoading}
-          >
-            {getButtonText()} <ArrowRight className="ml-2" />
-          </Button>
-        </div>
-      </section>
-
+      <FeaturesSection />
+      <ScreenshotsSection />
+      <PricingSection onAction={handleAction} buttonText={getButtonText()} isLoading={isLoading} />
+      <CTASection onAction={handleAction} buttonText={getButtonText()} isLoading={isLoading} />
       <Footer />
     </div>
   );
