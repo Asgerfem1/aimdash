@@ -78,6 +78,24 @@ const Index = () => {
     },
   ];
 
+  const screenshots = [
+    {
+      title: "Goal Dashboard",
+      description: "Track all your goals in one place with our intuitive dashboard",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    },
+    {
+      title: "AI Assistant",
+      description: "Get personalized guidance with our AI Goal Planning Assistant",
+      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+    },
+    {
+      title: "Progress Analytics",
+      description: "Visualize your progress with detailed analytics and insights",
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+    },
+  ];
+
   const pricingPlan = {
     name: "Lifetime Access",
     price: "$24",
@@ -90,7 +108,7 @@ const Index = () => {
       "Recurring goals",
       "Visual analytics",
       "Custom categories",
-      "AI Goal Planning Assistant", // Added new feature
+      "AI Goal Planning Assistant",
     ],
   };
 
@@ -117,6 +135,30 @@ const Index = () => {
                   <p className="text-gray-600">{feature.description}</p>
                 </CardContent>
               </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Screenshots Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-white to-primary-100">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-primary-700">
+            See AimDash in Action
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {screenshots.map((screenshot, index) => (
+              <div key={index} className="space-y-4">
+                <div className="aspect-video rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
+                  <img
+                    src={screenshot.image}
+                    alt={screenshot.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold text-center">{screenshot.title}</h3>
+                <p className="text-gray-600 text-center">{screenshot.description}</p>
+              </div>
             ))}
           </div>
         </div>
