@@ -92,7 +92,7 @@ const Index = () => {
     {
       title: "Progress Analytics",
       description: "Visualize your progress with detailed analytics and insights",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+      image: "/lovable-uploads/c26efbfd-6f70-4f17-a3f4-d30278c7b00f.png",
     },
   ];
 
