@@ -87,7 +87,7 @@ const Index = () => {
     {
       title: "AI Assistant",
       description: "Get personalized guidance with our AI Goal Planning Assistant",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+      image: "/lovable-uploads/d289ccb1-450a-4890-b18e-28b96857ceee.png",
     },
     {
       title: "Progress Analytics",
