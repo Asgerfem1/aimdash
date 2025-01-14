@@ -82,7 +82,7 @@ const Index = () => {
     {
       title: "Goal Dashboard",
       description: "Track all your goals in one place with our intuitive dashboard",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+      image: "/lovable-uploads/2e05b854-031d-4037-a704-12139d5a50d9.png",
     },
     {
       title: "AI Assistant",
