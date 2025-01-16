@@ -13,6 +13,8 @@ serve(async (req) => {
   }
 
   try {
+    const { promoCode } = await req.json();
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -33,17 +35,53 @@ serve(async (req) => {
       throw new Error("Unauthorized");
     }
 
+    let discountPercent = 0;
+    if (promoCode) {
+      const { data: promoData, error: promoError } = await supabaseClient
+        .from('promo_codes')
+        .select('*')
+        .eq('code', promoCode)
+        .eq('is_active', true)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (promoError) {
+        throw new Error("Invalid promo code");
+      }
+
+      if (promoData.max_uses && promoData.current_uses >= promoData.max_uses) {
+        throw new Error("Promo code has reached maximum uses");
+      }
+
+      discountPercent = promoData.discount_percent;
+
+      // Update promo code usage
+      await supabaseClient
+        .from('promo_codes')
+        .update({ current_uses: promoData.current_uses + 1 })
+        .eq('id', promoData.id);
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
       apiVersion: "2023-10-16",
       httpClient: Stripe.createFetchHttpClient(),
     });
 
-    // Create a checkout session with the new price ID
+    const unitAmount = 2400; // $24.00
+    const discountedAmount = Math.round(unitAmount * (1 - discountPercent / 100));
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
         {
-          price: "price_1QdIJACrd02GcI0rumqGSNFM",
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'AimDash Lifetime Access',
+              description: 'One-time payment for all features',
+            },
+            unit_amount: discountedAmount,
+          },
           quantity: 1,
         },
       ],
@@ -52,6 +90,7 @@ serve(async (req) => {
       cancel_url: `${req.headers.get("origin")}/#pricing`,
       metadata: {
         user_id: user.id,
+        promo_code: promoCode || null,
       },
     });
 

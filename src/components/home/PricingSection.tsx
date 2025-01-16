@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface PricingSectionProps {
-  onAction: () => void;
+  onAction: (promoCode?: string) => void;
   buttonText: string;
   isLoading: boolean;
 }
@@ -25,6 +28,12 @@ const pricingPlan = {
 };
 
 export const PricingSection = ({ onAction, buttonText, isLoading }: PricingSectionProps) => {
+  const [promoCode, setPromoCode] = useState("");
+
+  const handleSubmit = () => {
+    onAction(promoCode);
+  };
+
   return (
     <section id="pricing" className="py-20 px-4 bg-gray-50">
       <div className="container mx-auto max-w-6xl">
@@ -48,13 +57,21 @@ export const PricingSection = ({ onAction, buttonText, isLoading }: PricingSecti
                   </li>
                 ))}
               </ul>
-              <Button 
-                className="w-full"
-                onClick={onAction}
-                disabled={isLoading}
-              >
-                {buttonText}
-              </Button>
+              <div className="space-y-4">
+                <Input
+                  placeholder="Enter promo code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  className="w-full"
+                />
+                <Button 
+                  className="w-full"
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                >
+                  {buttonText}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

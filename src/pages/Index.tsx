@@ -29,7 +29,7 @@ const Index = () => {
     enabled: !!user,
   });
 
-  const handleAction = async () => {
+  const handleAction = async (promoCode?: string) => {
     if (!user) {
       navigate("/signup");
       return;
@@ -42,7 +42,7 @@ const Index = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {},
+        body: { promoCode },
       });
 
       if (error) throw error;
@@ -64,11 +64,11 @@ const Index = () => {
   return (
     <div className="min-h-screen font-outfit">
       <Navigation />
-      <HeroSection onAction={handleAction} buttonText={getButtonText()} isLoading={isLoading} />
+      <HeroSection onAction={() => handleAction()} buttonText={getButtonText()} isLoading={isLoading} />
       <FeaturesSection />
       <ScreenshotsSection />
       <PricingSection onAction={handleAction} buttonText={getButtonText()} isLoading={isLoading} />
-      <CTASection onAction={handleAction} buttonText={getButtonText()} isLoading={isLoading} />
+      <CTASection onAction={() => handleAction()} buttonText={getButtonText()} isLoading={isLoading} />
       <Footer />
     </div>
   );
