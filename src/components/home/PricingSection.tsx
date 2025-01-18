@@ -1,81 +1,124 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CheckCircle2 } from "lucide-react";
+import { useUser } from "@supabase/auth-helpers-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-interface PricingSectionProps {
-  onAction: (promoCode?: string) => void;
-  buttonText: string;
-  isLoading: boolean;
-}
-
-const pricingPlan = {
-  name: "Lifetime Access",
-  price: "$24",
-  description: "One-time payment for all features",
-  features: [
-    "Unlimited goals",
-    "Goal progress tracking",
-    "Task management",
-    "Priority levels",
-    "Recurring goals",
-    "Visual analytics",
-    "Custom categories",
-    "AI Goal Planning Assistant",
-  ],
-};
-
-export const PricingSection = ({ onAction, buttonText, isLoading }: PricingSectionProps) => {
+export function PricingSection() {
   const [promoCode, setPromoCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useUser();
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    onAction(promoCode);
+  const handleCheckout = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+        body: JSON.stringify({ promoCode: promoCode.trim() || null }),
+      });
+
+      const { url, error } = await response.json();
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      window.location.href = url;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      toast.error("Failed to start checkout process");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <section id="pricing" className="py-20 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-6xl">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-primary-700">
-          Simple, One-Time Pricing
-        </h2>
-        <div className="max-w-lg mx-auto">
-          <Card className="border-2 border-primary shadow-xl">
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-bold mb-2">{pricingPlan.name}</h3>
-              <div className="mb-4">
-                <span className="text-3xl font-bold">{pricingPlan.price}</span>
-                <span className="text-gray-600"> one-time</span>
+    <section id="pricing" className="py-24 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
+            Simple, transparent pricing
+          </h2>
+          <p className="mt-4 text-xl text-gray-600">
+            Get lifetime access to all features
+          </p>
+        </div>
+
+        <div className="mt-16 bg-white rounded-lg shadow-lg overflow-hidden lg:max-w-none lg:flex">
+          <div className="px-6 py-8 lg:p-12">
+            <h3 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+              Lifetime Access
+            </h3>
+            <p className="mt-6 text-base text-gray-500">
+              Get unlimited access to all features forever with a one-time payment
+            </p>
+            <div className="mt-8">
+              <div className="flex items-center">
+                <h4 className="flex-shrink-0 pr-4 text-4xl font-bold text-gray-900">
+                  $24
+                </h4>
               </div>
-              <p className="text-gray-600 mb-6">{pricingPlan.description}</p>
-              <ul className="space-y-3 mb-6">
-                {pricingPlan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center">
-                    <CheckCircle2 className="text-primary mr-2 h-5 w-5" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="space-y-4">
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <div className="flex items-center gap-2">
                 <Input
                   placeholder="Enter promo code"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
-                  className="w-full"
+                  className="max-w-[200px]"
                 />
-                <Button 
-                  className="w-full"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                >
-                  {buttonText}
-                </Button>
               </div>
-            </CardContent>
-          </Card>
+
+              <Button
+                onClick={handleCheckout}
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : "Get Started"}
+              </Button>
+            </div>
+          </div>
+          <div className="py-8 px-6 text-center bg-gray-50 lg:flex-shrink-0 lg:flex lg:flex-col lg:justify-center lg:p-12">
+            <p className="text-lg leading-6 font-medium text-gray-900">
+              What's included:
+            </p>
+            <ul className="mt-6 space-y-4">
+              <li className="flex items-start">
+                <span className="ml-3 text-base text-gray-500">
+                  Unlimited goal tracking
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="ml-3 text-base text-gray-500">
+                  AI-powered goal planning
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="ml-3 text-base text-gray-500">
+                  Progress analytics
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="ml-3 text-base text-gray-500">
+                  Priority support
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
   );
-};
+}
